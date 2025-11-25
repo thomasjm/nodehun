@@ -14,42 +14,49 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        node-version: ["lts/*"]
+        node-version:
+        - 18.x
+        - 20.x
+        - 21.x
+        - 22.x
+        - 23.x
+        - 24.x
+        - 25.x
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.x"
 
-      - name: Install build tools (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential
+    - name: Install build tools (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential
 
-      - name: Install dependencies
-        run: |
-          npm install
+    - name: Install dependencies
+      run: |
+        npm install
 
-      - name: Display versions
-        run: |
-          node --version
-          npm --version
-          python --version || python3 --version
+    - name: Display versions
+      run: |
+        node --version
+        npm --version
+        python --version || python3 --version
 
-      - name: Run tests
-        run: npm test
+    - name: Run tests
+      run: npm test
 
   test-windows:
     name: Test on Windows with Node ${{ matrix.node-version }} (${{ matrix.arch }})
@@ -60,37 +67,37 @@ jobs:
         node-version: ["lts/*"]
         arch: ["x64"]
         include:
-          - node-version: "22"
-            arch: "x86"
+        - node-version: "22"
+          arch: "x86"
 
     steps:
-      - name: Configure git line endings
-        run: git config --global core.autocrlf input
+    - name: Configure git line endings
+      run: git config --global core.autocrlf input
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          architecture: ${{ matrix.arch }}
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        architecture: ${{ matrix.arch }}
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.x"
 
-      - name: Install dependencies
-        run: npm install
+    - name: Install dependencies
+      run: npm install
 
-      - name: Display versions
-        run: |
-          node --version
-          npm --version
-          python --version
+    - name: Display versions
+      run: |
+        node --version
+        npm --version
+        python --version
 
-      - name: Run tests
-        run: npm test
+    - name: Run tests
+      run: npm test

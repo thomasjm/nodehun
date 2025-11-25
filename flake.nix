@@ -1,28 +1,20 @@
 {
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/master";
+  inputs.flake-utils.url = "github:numtide/flake-utils";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-  outputs = { self, nixpkgs }:
-    let
-      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-      forAllSystems = nixpkgs.lib.genAttrs systems;
-    in
-    {
-      devShells = forAllSystems (system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-        in
+  outputs = { self, flake-utils, nixpkgs }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = import nixpkgs { inherit system; };
+      in
         {
-          default = pkgs.mkShell {
-            buildInputs = with pkgs; [
-              nodejs
-            ];
-
-            shellHook = ''
-              echo "nodehun development environment"
-              echo "node version: $(node --version)"
-            '';
+          devShells = {
+            default = pkgs.mkShell {
+              buildInputs = with pkgs; [
+                nodejs
+              ];
+            };
           };
         }
-      );
-    };
+    );
 }

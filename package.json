@@ -37,7 +37,7 @@
   },
   "scripts": {
     "build": "node-gyp rebuild -j 8",
-    "test-build": "tsc --outDir test test/*.ts",
+    "test-build": "tsc --outDir test test/index.spec.ts",
     "test-run": "mocha test/index.spec.js",
     "test": "npm run test-build && npm run test-run",
     "performance-test": "echo \"This command only works with node version 11 or lower!\" && npm i chart.js@2.9.2 chartjs-node@1.7.1 nodehun@3.0.2 && node test/performance/performance.ts"

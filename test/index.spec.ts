@@ -1,6 +1,9 @@
 import { fail, strictEqual, throws, deepEqual, notEqual } from "assert"
 import { userInfo } from "os"
 
+// Load segfault handler to catch crashes and generate stack traces
+require('segfault-handler').registerHandler('crash.log')
+
 const Nodehun = require('bindings')('Nodehun')
 const fs = require('fs')
 const path = require('path')

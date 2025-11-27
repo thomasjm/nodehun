@@ -1274,7 +1274,8 @@ describe('Nodehun#addWithAffix(word: string, example: string): Promise<void>;', 
 
     it(`should mark correct`, async () => {
         await nodehun.addWithAffix('colour', 'color')
-        strictEqual(await nodehun.spell('colouring'), true)
+        const result = await nodehun.spell('colouring');
+        strictEqual(result, true)
     })
 })
 

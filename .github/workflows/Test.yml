@@ -8,7 +8,7 @@ on:
 
 jobs:
   test-linux-macos:
-    name: Test on ${{ matrix.os }} with Node ${{ matrix.node-version }}
+    name: ${{ matrix.os }} / Node ${{ matrix.node-version }}
     runs-on: ${{ matrix.os }}
 
     strategy:

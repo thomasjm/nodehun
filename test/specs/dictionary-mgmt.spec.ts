@@ -359,6 +359,113 @@ runWithAllConstructors('Dictionary Management Tests', (context: TestContext) => 
     })
   })
 
+  describe('Nodehun#addDictionaryPath(dictionaryPath: string): Promise<void>;', () => {
+    let nodehun: any
+
+    beforeEach(() => {
+      nodehun = context.factory.create('enUS')
+    })
+
+    it(`should be a function`, () => {
+      strictEqual(typeof nodehun.addDictionaryPath, 'function')
+    })
+
+    it(`should return a promise`, () => {
+      const result = nodehun.addDictionaryPath('test')
+      strictEqual(typeof result.then, 'function')
+    })
+
+    it(`should throw when no arguments are given`, async () => {
+      try {
+        await nodehun.addDictionaryPath()
+        fail()
+      } catch {
+        // success
+      }
+    })
+
+    it(`should throw when 2 arguments are given`, async () => {
+      try {
+        await nodehun.addDictionaryPath(1, 2)
+        fail()
+      } catch {
+        // success
+      }
+    })
+
+    it(`should throw when the first argument isn't a string`, async () => {
+      try {
+        await nodehun.addDictionaryPath(1)
+        fail()
+      } catch {
+        // success
+      }
+    })
+
+    if (context.factory.description.includes('Path')) {
+      it(`should mark correct after dictionary is added`, async () => {
+        await nodehun.addDictionaryPath(context.dictionaries.fr.dictionaryPath)
+        strictEqual(await nodehun.spell('bonjour'), true)
+      })
+    } else {
+      it(`should not affect spelling when used with buffer constructor`, async () => {
+        await nodehun.addDictionaryPath(context.dictionaries.fr.dictionaryPath)
+        strictEqual(await nodehun.spell('bonjour'), false)
+      })
+    }
+  })
+
+  describe('Nodehun#addDictionaryPathSync(dictionaryPath: string): void;', () => {
+    let nodehun: any
+
+    beforeEach(() => {
+      nodehun = context.factory.create('enUS')
+    })
+
+    it(`should be a function`, () => {
+      strictEqual(typeof nodehun.addDictionaryPathSync, 'function')
+    })
+
+    it(`should throw when no arguments are given`, () => {
+      try {
+        nodehun.addDictionaryPathSync()
+        fail()
+      } catch {
+        // success
+      }
+    })
+
+    it(`should throw when 2 arguments are given`, () => {
+      try {
+        nodehun.addDictionaryPathSync(1, 2)
+        fail()
+      } catch {
+        // success
+      }
+    })
+
+    it(`should throw when the first argument isn't a string`, () => {
+      try {
+        nodehun.addDictionaryPathSync(1)
+        fail()
+      } catch {
+        // success
+      }
+    })
+
+    if (context.factory.description.includes('Path')) {
+      it(`should mark correct after dictionary is added`, () => {
+        nodehun.addDictionaryPathSync(context.dictionaries.fr.dictionaryPath)
+        strictEqual(nodehun.spellSync('bonjour'), true)
+      })
+    } else {
+      it(`should not affect spelling when used with buffer constructor`, () => {
+        nodehun.addDictionaryPathSync(context.dictionaries.fr.dictionaryPath)
+        strictEqual(nodehun.spellSync('bonjour'), false)
+      })
+    }
+  })
+
   describe('Nodehun#addWithAffix(word: string, example: string): Promise<void>;', () => {
     let nodehun: any
 

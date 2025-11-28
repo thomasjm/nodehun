@@ -4,4 +4,4 @@ build
 log.txt
 .vscode
 .direnv
-test/index.spec.js
+test/**/*.js

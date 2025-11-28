@@ -38,9 +38,12 @@
   },
   "scripts": {
     "build": "node-gyp rebuild -j 8",
-    "test-build": "tsc --outDir test test/index.spec.ts",
-    "test-run": "mocha test/index.spec.js",
+    "test-build": "tsc --outDir test test/index.new.spec.ts test/fixtures/dictionaries.ts test/utils/test-factory.ts test/specs/*.ts",
+    "test-build-legacy": "tsc --outDir test test/index.spec.ts",
+    "test-run": "mocha test/index.new.spec.js",
+    "test-run-legacy": "mocha test/index.spec.js",
     "test": "npm run test-build && npm run test-run",
+    "test-legacy": "npm run test-build-legacy && npm run test-run-legacy",
     "performance-test": "echo \"This command only works with node version 11 or lower!\" && npm i chart.js@2.9.2 chartjs-node@1.7.1 nodehun@3.0.2 && node test/performance/performance.ts"
   }
 }

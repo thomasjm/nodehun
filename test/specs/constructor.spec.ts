@@ -1,9 +1,9 @@
 import { fail, strictEqual } from 'assert'
-import { TestContext, runWithAllConstructors } from '../utils/test-factory'
+import { DICTIONARIES } from '../fixtures/dictionaries'
 
 const Nodehun = require('bindings')('Nodehun')
 
-runWithAllConstructors('Constructor Tests', (context: TestContext) => {
+describe('Constructor Tests', () => {
   it(`should export a function`, () => {
     strictEqual(typeof Nodehun, 'function')
   })
@@ -44,7 +44,7 @@ runWithAllConstructors('Constructor Tests', (context: TestContext) => {
     }
   })
 
-  if (context.factory.description.includes('Buffer')) {
+  describe('Buffer Constructor', () => {
     it(`should throw when the first argument isn't a buffer`, () => {
       try {
         new Nodehun(1, 2)
@@ -56,7 +56,7 @@ runWithAllConstructors('Constructor Tests', (context: TestContext) => {
 
     it(`should throw when the second argument isn't a buffer`, () => {
       try {
-        new Nodehun(context.dictionaries.enUS.affixBuffer, 2)
+        new Nodehun(DICTIONARIES.enUS.affixBuffer, 2)
         fail()
       } catch {
         // success
@@ -64,11 +64,11 @@ runWithAllConstructors('Constructor Tests', (context: TestContext) => {
     })
 
     it(`should successfully construct an object when two buffers are given`, () => {
-      context.factory.create('enUS')
+      new Nodehun(DICTIONARIES.enUS.affixBuffer, DICTIONARIES.enUS.dictionaryBuffer)
     })
-  }
+  })
 
-  if (context.factory.description.includes('Path')) {
+  describe('Path Constructor', () => {
     it(`should throw when the first argument isn't a string`, () => {
       try {
         new Nodehun(1, 2)
@@ -88,7 +88,7 @@ runWithAllConstructors('Constructor Tests', (context: TestContext) => {
     })
 
     it(`should successfully construct an object when two file paths are given`, () => {
-      context.factory.create('enUS')
+      new Nodehun(DICTIONARIES.enUS.affixPath, DICTIONARIES.enUS.dictionaryPath)
     })
-  }
+  })
 })

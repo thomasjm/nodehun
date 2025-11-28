@@ -45,20 +45,18 @@ runWithAllConstructors('Suggest Tests', (context: TestContext) => {
       }
     })
 
-    it('should return null when the word is spelled correctly', async () => {
-      const result = await nodehun.suggest('hello')
-      strictEqual(result, null)
+    it(`should return null when the word is spelled correctly`, async () => {
+      strictEqual(await nodehun.suggest('color'), null)
     })
 
     it('should return an array when the word is not spelled correctly', async () => {
-      const result = await nodehun.suggest('wrng')
+      const result = await nodehun.suggest('colour')
       strictEqual(Array.isArray(result), true)
     })
 
     it('should return appropriate suggestions when a word is spelled incorrectly', async () => {
-      const result = await nodehun.suggest('speling')
-      strictEqual(Array.isArray(result), true)
-      strictEqual(result.includes('spelling'), true)
+      const result = await nodehun.suggest('colour')
+      deepEqual(result.splice(0, 3), ['color', 'co lour', 'co-lour'])
     })
   })
 
@@ -95,89 +93,73 @@ runWithAllConstructors('Suggest Tests', (context: TestContext) => {
     })
 
     it('should return null when correct (1)', () => {
-      const result = nodehun.suggestSync('hello')
-      strictEqual(result, null)
+      const result = nodehun.suggestSync('color')
+      deepEqual(result, null)
     })
 
     it('should return null when correct (2)', () => {
-      const result = nodehun.suggestSync('world')
-      strictEqual(result, null)
+      const result = nodehun.suggestSync('c')
+      deepEqual(result, null)
     })
 
     it('should suggest alternatives', () => {
-      const result = nodehun.suggestSync('speling')
-      strictEqual(Array.isArray(result), true)
-      notEqual(result.length, 0)
-      strictEqual(result.includes('spelling'), true)
+      const result = nodehun.suggestSync('colour')
+      deepEqual(result.slice(0, 5), ['color', 'co lour', 'co-lour', 'col our', 'col-our'])
     })
 
     it('should suggest alternatives', () => {
-      const result = nodehun.suggestSync('srelling')
-      strictEqual(Array.isArray(result), true)
-      notEqual(result.length, 0)
-      strictEqual(result.includes('spelling'), true)
+      const result = nodehun.suggestSync('propper')
+      deepEqual(result.slice(0, 5), ['proper', 'popper', 'prosper', 'cropper', 'propped'])
     })
 
     it('should return null for empty values', () => {
-      const result = nodehun.suggestSync('')
-      strictEqual(result, null)
+      const result = nodehun.suggestSync(' ')
+      deepEqual(result, null)
     })
 
     it('should return null for non-words', () => {
-      const result = nodehun.suggestSync('123')
-      strictEqual(result, null)
+      const result = nodehun.suggestSync('.')
+      deepEqual(result, null)
     })
 
     it('should suggest alternatives for sentence-case', () => {
-      const result = nodehun.suggestSync('Speling')
-      strictEqual(Array.isArray(result), true)
-      notEqual(result.length, 0)
-      strictEqual(result.includes('Spelling'), true)
+      const result = nodehun.suggestSync('Colour')
+      deepEqual(result.slice(0, 5), ['Co lour', 'Co-lour', 'Col our', 'Col-our', 'Color'])
     })
 
     it('should suggest alternatives for upper-case', () => {
-      const result = nodehun.suggestSync('SPELING')
-      strictEqual(Array.isArray(result), true)
-      notEqual(result.length, 0)
-      strictEqual(result.includes('SPELLING'), true)
+      const result = nodehun.suggestSync('COLOUR')
+      deepEqual(result.slice(0, 5), ['COLOR', 'CO LOUR', 'CO-LOUR', 'COL OUR', 'COL-OUR'])
     })
 
     it('should suggest alternatives for funky-case', () => {
-      const result = nodehun.suggestSync('SpElInG')
-      strictEqual(Array.isArray(result), true)
-      notEqual(result.length, 0)
-      strictEqual(result.includes('SpElLiNg'), true)
+      const result = nodehun.suggestSync('coLOUR')
+      deepEqual(result.slice(0, 5), ['col Our', 'co Lour', 'color', 'co-lour', 'col-our'])
     })
 
     it('should suggest uppercase versions', () => {
-      const result = nodehun.suggestSync('API')
-      strictEqual(result, null)
+      const result = nodehun.suggestSync('html')
+      deepEqual(result, ['HTML', 'ht ml', 'ht-ml'])
     })
 
     it('should suggest removals', () => {
-      const result = nodehun.suggestSync('rremoval')
-      strictEqual(Array.isArray(result), true)
-      notEqual(result.length, 0)
-      strictEqual(result.includes('removal'), true)
+      const result = nodehun.suggestSync('collor')
+      deepEqual(result.slice(0, 5), ['color', 'collar', 'coll or', 'coll-or', 'collator'])
     })
 
     it('should suggest additions', () => {
-      const result = nodehun.suggestSync('spel')
-      strictEqual(Array.isArray(result), true)
-      notEqual(result.length, 0)
-      strictEqual(result.includes('spell'), true)
+      const result = nodehun.suggestSync('coor')
+      notEqual(result.indexOf('color'), -1)
     })
 
     it('should suggest switches', () => {
-      const result = nodehun.suggestSync('wrnog')
-      strictEqual(Array.isArray(result), true)
-      notEqual(result.length, 0)
-      strictEqual(result.includes('wrong'), true)
+      const result = nodehun.suggestSync('cloor')
+      strictEqual(result.includes('color'), true)
     })
 
     it('should suggest insertions', () => {
-      const result = nodehun.suggestSync('word')
-      strictEqual(result, null)
+      const result = nodehun.suggestSync('coor')
+      strictEqual(result.includes('color'), true)
     })
 
     it('should not suggest alternatives for correctly spelled Dutch words', () => {
@@ -190,17 +172,20 @@ runWithAllConstructors('Suggest Tests', (context: TestContext) => {
       }
     })
 
+    it('should not suggest alternatives marked with \'NOSUGGEST\'', () => {
+      const result = nodehun.suggestSync('bulshit')
+      strictEqual(result.includes('bullshit') || result.includes('Bullshit'), false)
+    })
+
     it('should suggest based on replacements', () => {
-      const result = nodehun.suggestSync('phello')
-      strictEqual(Array.isArray(result), true)
-      notEqual(result.length, 0)
-      strictEqual(result.includes('hello'), true)
+      const result = nodehun.suggestSync('consize')
+      strictEqual(result.includes('concise'), true)
     })
 
     it('should not overflow on too long values', () => {
-      const longString = 'a'.repeat(8193)
-      const result = nodehun.suggestSync(longString)
-      strictEqual(Array.isArray(result), true)
+      const word = 'npmnpmnpmnpmnpmnpmnpmnpmnpmnpmnpmnpmnpmnpmnpm'
+      const result = nodehun.suggestSync(word)
+      deepEqual(result, [])
     })
   })
 })

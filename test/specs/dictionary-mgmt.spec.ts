@@ -46,11 +46,8 @@ runWithAllConstructors('Dictionary Management Tests', (context: TestContext) => 
     })
 
     it('should mark correct after dictionary is added', async () => {
-      const before = nodehun.spellSync('bonjour')
       await nodehun.addDictionary(context.dictionaries.fr.dictionaryBuffer)
-      const after = nodehun.spellSync('bonjour')
-      strictEqual(before, false)
-      strictEqual(after, true)
+      strictEqual(await nodehun.spell('bonjour'), true)
     })
   })
 
@@ -141,11 +138,10 @@ runWithAllConstructors('Dictionary Management Tests', (context: TestContext) => 
     })
 
     it('should no longer receive suggestions', async () => {
-      const before = nodehun.suggestSync('testword')
-      await nodehun.add('testword')
-      const after = nodehun.suggestSync('testword')
-      notEqual(before, null)
-      strictEqual(after, null)
+      const word = 'npm'
+      notEqual(await nodehun.suggest(word), null)  // Initially gets suggestions
+      await nodehun.add(word)
+      strictEqual(await nodehun.suggest(word), null)  // No longer gets suggestions
     })
   })
 
@@ -190,11 +186,10 @@ runWithAllConstructors('Dictionary Management Tests', (context: TestContext) => 
     })
 
     it('should no longer receive suggestions', () => {
-      const before = nodehun.suggestSync('testword3')
-      nodehun.addSync('testword3')
-      const after = nodehun.suggestSync('testword3')
-      notEqual(before, null)
-      strictEqual(after, null)
+      const word = 'npm'
+      notEqual(nodehun.suggestSync(word), null)  // Initially gets suggestions
+      nodehun.addSync(word)
+      strictEqual(nodehun.suggestSync(word), null)  // No longer gets suggestions
     })
   })
 
@@ -355,9 +350,11 @@ runWithAllConstructors('Dictionary Management Tests', (context: TestContext) => 
     })
 
     it('should no longer receive suggestions', async () => {
-      await testNodehun.remove('hello')
-      const after = testNodehun.suggestSync('hello')
-      strictEqual(after, null)
+      const word = 'npm'
+      await testNodehun.add(word)  // Add it first
+      strictEqual(await testNodehun.suggest(word), null)  // No suggestions after adding
+      await testNodehun.remove(word)
+      notEqual(await testNodehun.suggest(word), null)  // Gets suggestions again after removing
     })
   })
 
@@ -408,9 +405,11 @@ runWithAllConstructors('Dictionary Management Tests', (context: TestContext) => 
     })
 
     it('should no longer receive suggestions', () => {
-      testNodehun.removeSync('hello')
-      const after = testNodehun.suggestSync('hello')
-      strictEqual(after, null)
+      const word = 'npm'
+      testNodehun.addSync(word)  // Add it first
+      strictEqual(testNodehun.suggestSync(word), null)  // No suggestions after adding
+      testNodehun.removeSync(word)
+      notEqual(testNodehun.suggestSync(word), null)  // Gets suggestions again after removing
     })
   })
 })

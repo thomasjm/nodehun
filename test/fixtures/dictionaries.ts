@@ -10,7 +10,7 @@ export interface DictionaryConfig {
 }
 
 // Dictionary paths
-const basePath = path.resolve(__dirname, '../dictionaries')
+const basePath = path.resolve(__dirname, '../../test/dictionaries')
 
 // Helper functions to load files
 function loadAffix(path: string): Buffer {

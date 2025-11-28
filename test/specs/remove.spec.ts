@@ -1,22 +1,23 @@
-import { fail, strictEqual } from 'assert'
+import { fail, strictEqual, notEqual } from 'assert'
 import { TestContext, runWithAllConstructors } from '../utils/test-factory'
 
-runWithAllConstructors('Spell Tests', (context: TestContext) => {
-  describe('#spell(word)', () => {
+runWithAllConstructors('remove Tests', (context: TestContext) => {
+  describe('Nodehun#remove(word)', () => {
     let nodehun: any
 
     beforeEach(() => {
+      // clear changes before each test
       nodehun = context.factory.create('enUS')
     })
 
     it(`should be a function`, async () => {
-      strictEqual(typeof nodehun.spell, 'function')
+      strictEqual(typeof nodehun.remove, 'function')
     })
 
     it(`should return a promise`, async () => {
       let success = false
 
-      await nodehun.spell()
+      await nodehun.remove()
         .then(() => { })
         .catch(() => { })
         .finally(() => { success = true })
@@ -26,7 +27,7 @@ runWithAllConstructors('Spell Tests', (context: TestContext) => {
 
     it(`should throw when 0 arguments are given`, async () => {
       try {
-        await nodehun.spell()
+        await nodehun.remove()
         fail()
       } catch {
         // success
@@ -35,7 +36,7 @@ runWithAllConstructors('Spell Tests', (context: TestContext) => {
 
     it(`should throw when 2 arguments are given`, async () => {
       try {
-        await nodehun.spell(1, 2)
+        await nodehun.remove(1, 2)
         fail()
       } catch {
         // success
@@ -44,24 +45,29 @@ runWithAllConstructors('Spell Tests', (context: TestContext) => {
 
     it(`should throw when the first argument isn't a string`, async () => {
       try {
-        await nodehun.spell(123456)
+        await nodehun.remove(123456)
         fail()
       } catch {
         // success
       }
     })
 
-    it(`should return true when the word is spelled correctly`, async () => {
-      strictEqual(await nodehun.spell('color'), true)
+    it(`should now mark as correct`, async () => {
+      const word = 'npm'
+
+      await nodehun.add(word)
+      strictEqual(await nodehun.spell(word), true)
+      await nodehun.remove('npm')
+      strictEqual(await nodehun.spell(word), false)
     })
 
-    it(`should return false when the word is not spelled correctly`, async () => {
-      strictEqual(await nodehun.spell('colour'), false)
-    })
+    it(`should no longer receive suggestions`, async () => {
+      const word = 'npm'
 
-    it(`should not throw when spellchecking emojis ☀`, async () => {
-      await nodehun.spell('😀')
-      await nodehun.spell('☀')
+      await nodehun.add(word)
+      strictEqual(await nodehun.suggest(word), null)
+      await nodehun.remove(word)
+      notEqual(await nodehun.suggest(word), null)
     })
   })
 })

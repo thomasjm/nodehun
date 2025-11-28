@@ -38,9 +38,9 @@
   },
   "scripts": {
     "build": "node-gyp rebuild -j 8",
-    "test-build": "tsc --outDir build test/index.new.spec.ts test/fixtures/dictionaries.ts test/utils/test-factory.ts test/specs/*.ts",
+    "test-build": "tsc --outDir build test/fixtures/dictionaries.ts test/utils/test-factory.ts test/specs/*.ts",
     "test-build-legacy": "tsc --outDir build test/index.spec.ts",
-    "test-run": "mocha build/index.new.spec.js",
+    "test-run": "mocha 'build/specs/*.js'",
     "test-run-legacy": "mocha build/index.spec.js",
     "test": "npm run test-build && npm run test-run",
     "test-legacy": "npm run test-build-legacy && npm run test-run-legacy",

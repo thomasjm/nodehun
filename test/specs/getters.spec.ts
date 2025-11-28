@@ -12,7 +12,7 @@ runWithAllConstructors('Getter Tests', (context: TestContext) => {
     })
 
     it(`should return the defined word-characters`, () => {
-      strictEqual(nodehun.getWordCharacters(), `0123456789'.-'`)
+      strictEqual(nodehun.getWordCharacters(), `0123456789'.-’`)
     })
 
     it(`should return 'undefined' when not defined`, () => {
@@ -30,7 +30,7 @@ runWithAllConstructors('Getter Tests', (context: TestContext) => {
     })
 
     it(`should return the defined word-characters`, () => {
-      strictEqual(nodehun.getWordCharactersUTF16(), `'-.0123456789'`)
+      strictEqual(nodehun.getWordCharactersUTF16(), `'-.0123456789’`)
     })
 
     it(`should return 'undefined' when not defined`, () => {

@@ -120,14 +120,18 @@ Napi::Value Nodehun::addDictionarySync(const Napi::CallbackInfo& info) {
     Napi::Error error = Napi::Error::New(env, INVALID_NUMBER_OF_ARGUMENTS);
     error.ThrowAsJavaScriptException();
     return error.Value();
-  } else if (!info[0].IsBuffer()) {
+  } else if (!(info[0].IsBuffer() || info[0].IsString())) {
     Napi::Error error = Napi::Error::New(env, INVALID_FIRST_ARGUMENT);
     error.ThrowAsJavaScriptException();
     return error.Value();
   } else {
-    Napi::Buffer<char> dictionaryBuffer = info[0].As<Napi::Buffer<char>>();
-
-    std::string dictionary(dictionaryBuffer.Data(), dictionaryBuffer.Length());
+    std::string dictionary;
+    if (info[0].IsBuffer()) {
+      Napi::Buffer<char> dictionaryBuffer = info[0].As<Napi::Buffer<char>>();
+      dictionary = std::string(dictionaryBuffer.Data(), dictionaryBuffer.Length());
+    } else {
+      dictionary = info[0].As<Napi::String>().Utf8Value();
+    }
     context->instance->add_dic(dictionary.c_str());
 
     return env.Undefined();
@@ -142,16 +146,22 @@ Napi::Value Nodehun::addDictionary(const Napi::CallbackInfo& info) {
   if (info.Length() != 1) {
     Napi::Error error = Napi::Error::New(env, INVALID_NUMBER_OF_ARGUMENTS);
     deferred.Reject(error.Value());
-  } else if (!info[0].IsBuffer()) {
+  } else if (!(info[0].IsBuffer() || info[0].IsString())) {
     Napi::Error error = Napi::Error::New(env, INVALID_FIRST_ARGUMENT);
     deferred.Reject(error.Value());
   } else {
-    Napi::Buffer<char> dictionaryBuffer = info[0].As<Napi::Buffer<char>>();
+    std::string dictionary;
+    if (info[0].IsBuffer()) {
+      Napi::Buffer<char> dictionaryBuffer = info[0].As<Napi::Buffer<char>>();
+      dictionary = std::string(dictionaryBuffer.Data(), dictionaryBuffer.Length());
+    } else {
+      dictionary = info[0].As<Napi::String>().Utf8Value();
+    }
 
     AddDictionaryWorker* worker = new AddDictionaryWorker(
       context,
       deferred,
-      std::string(dictionaryBuffer.Data(), dictionaryBuffer.Length())
+      dictionary
     );
 
     worker->Queue();

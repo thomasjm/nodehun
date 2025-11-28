@@ -300,7 +300,11 @@ runWithAllConstructors('Dictionary Management Tests', (context: TestContext) => 
     })
 
     it(`should mark correct after dictionary is added`, async () => {
-      await nodehun.addDictionary(context.dictionaries.fr.dictionaryBuffer)
+      // Use appropriate format based on constructor type
+      const frenchDict = context.factory.description.includes('Path')
+        ? context.dictionaries.fr.dictionaryPath
+        : context.dictionaries.fr.dictionaryBuffer
+      await nodehun.addDictionary(frenchDict)
       strictEqual(await nodehun.spell('bonjour'), true)
     })
   })
@@ -344,7 +348,11 @@ runWithAllConstructors('Dictionary Management Tests', (context: TestContext) => 
     })
 
     it(`should mark correct after dictionary is added`, async () => {
-      nodehun.addDictionarySync(context.dictionaries.fr.dictionaryBuffer)
+      // Use appropriate format based on constructor type
+      const frenchDict = context.factory.description.includes('Path')
+        ? context.dictionaries.fr.dictionaryPath
+        : context.dictionaries.fr.dictionaryBuffer
+      nodehun.addDictionarySync(frenchDict)
       strictEqual(nodehun.spellSync('bonjour'), true)
     })
   })

@@ -29,6 +29,8 @@ Napi::Object Nodehun::Init(Napi::Env env, Napi::Object exports) {
   Napi::Function func = DefineClass(env, "Nodehun", {
     InstanceMethod("addDictionary", &Nodehun::addDictionary),
     InstanceMethod("addDictionarySync", &Nodehun::addDictionarySync),
+    InstanceMethod("addDictionaryPath", &Nodehun::addDictionaryPath),
+    InstanceMethod("addDictionaryPathSync", &Nodehun::addDictionaryPathSync),
     InstanceMethod("spell", &Nodehun::spell),
     InstanceMethod("spellSync", &Nodehun::spellSync),
     InstanceMethod("suggest", &Nodehun::suggest),
@@ -120,18 +122,13 @@ Napi::Value Nodehun::addDictionarySync(const Napi::CallbackInfo& info) {
     Napi::Error error = Napi::Error::New(env, INVALID_NUMBER_OF_ARGUMENTS);
     error.ThrowAsJavaScriptException();
     return error.Value();
-  } else if (!(info[0].IsBuffer() || info[0].IsString())) {
+  } else if (!info[0].IsBuffer()) {
     Napi::Error error = Napi::Error::New(env, INVALID_FIRST_ARGUMENT);
     error.ThrowAsJavaScriptException();
     return error.Value();
   } else {
-    std::string dictionary;
-    if (info[0].IsBuffer()) {
-      Napi::Buffer<char> dictionaryBuffer = info[0].As<Napi::Buffer<char>>();
-      dictionary = std::string(dictionaryBuffer.Data(), dictionaryBuffer.Length());
-    } else {
-      dictionary = info[0].As<Napi::String>().Utf8Value();
-    }
+    Napi::Buffer<char> dictionaryBuffer = info[0].As<Napi::Buffer<char>>();
+    std::string dictionary(dictionaryBuffer.Data(), dictionaryBuffer.Length());
     context->instance->add_dic(dictionary.c_str());
 
     return env.Undefined();
@@ -146,22 +143,61 @@ Napi::Value Nodehun::addDictionary(const Napi::CallbackInfo& info) {
   if (info.Length() != 1) {
     Napi::Error error = Napi::Error::New(env, INVALID_NUMBER_OF_ARGUMENTS);
     deferred.Reject(error.Value());
-  } else if (!(info[0].IsBuffer() || info[0].IsString())) {
+  } else if (!info[0].IsBuffer()) {
     Napi::Error error = Napi::Error::New(env, INVALID_FIRST_ARGUMENT);
     deferred.Reject(error.Value());
   } else {
-    std::string dictionary;
-    if (info[0].IsBuffer()) {
-      Napi::Buffer<char> dictionaryBuffer = info[0].As<Napi::Buffer<char>>();
-      dictionary = std::string(dictionaryBuffer.Data(), dictionaryBuffer.Length());
-    } else {
-      dictionary = info[0].As<Napi::String>().Utf8Value();
-    }
+    Napi::Buffer<char> dictionaryBuffer = info[0].As<Napi::Buffer<char>>();
 
     AddDictionaryWorker* worker = new AddDictionaryWorker(
       context,
       deferred,
-      dictionary
+      std::string(dictionaryBuffer.Data(), dictionaryBuffer.Length())
+    );
+
+    worker->Queue();
+  }
+
+  return deferred.Promise();
+}
+
+Napi::Value Nodehun::addDictionaryPathSync(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  if (info.Length() != 1) {
+    Napi::Error error = Napi::Error::New(env, INVALID_NUMBER_OF_ARGUMENTS);
+    error.ThrowAsJavaScriptException();
+    return error.Value();
+  } else if (!info[0].IsString()) {
+    Napi::Error error = Napi::Error::New(env, INVALID_FIRST_ARGUMENT);
+    error.ThrowAsJavaScriptException();
+    return error.Value();
+  } else {
+    std::string dictionaryPath = info[0].As<Napi::String>().Utf8Value();
+    context->instance->add_dic(dictionaryPath.c_str());
+
+    return env.Undefined();
+  }
+}
+
+Napi::Value Nodehun::addDictionaryPath(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  Napi::Promise::Deferred deferred = Napi::Promise::Deferred::New(info.Env());
+
+  if (info.Length() != 1) {
+    Napi::Error error = Napi::Error::New(env, INVALID_NUMBER_OF_ARGUMENTS);
+    deferred.Reject(error.Value());
+  } else if (!info[0].IsString()) {
+    Napi::Error error = Napi::Error::New(env, INVALID_FIRST_ARGUMENT);
+    deferred.Reject(error.Value());
+  } else {
+    std::string dictionaryPath = info[0].As<Napi::String>().Utf8Value();
+
+    AddDictionaryWorker* worker = new AddDictionaryWorker(
+      context,
+      deferred,
+      dictionaryPath
     );
 
     worker->Queue();

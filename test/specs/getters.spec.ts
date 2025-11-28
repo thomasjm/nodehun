@@ -1,58 +1,64 @@
-import { strictEqual, throws } from 'assert'
+import { strictEqual } from 'assert'
 import { TestContext, runWithAllConstructors } from '../utils/test-factory'
 
-runWithAllConstructors('Getter Methods Tests', (context: TestContext) => {
-  let nodehun: any
-  let nodehunGB: any
+runWithAllConstructors('Getter Tests', (context: TestContext) => {
+  describe('Nodehun#getWordCharacters()', () => {
+    let nodehun: any
+    let nodehunGB: any
 
-  beforeEach(() => {
-    nodehun = context.factory.create('enUS')
-    nodehunGB = context.factory.create('enGB')
-  })
-
-  describe('#getWordCharacters()', () => {
-    it('should return the defined word-characters for US dictionary', () => {
-      const result = nodehun.getWordCharacters()
-      if (result !== undefined) {
-        strictEqual(typeof result, 'string')
-      }
+    beforeEach(() => {
+      nodehun = context.factory.create('enUS')
+      nodehunGB = context.factory.create('enGB')
     })
 
-    it('should return the defined word-characters for GB dictionary', () => {
-      const result = nodehunGB.getWordCharacters()
-      if (result !== undefined) {
-        strictEqual(typeof result, 'string')
-      }
+    it(`should return the defined word-characters`, () => {
+      strictEqual(nodehun.getWordCharacters(), `0123456789'.-'`)
+    })
+
+    it(`should return 'undefined' when not defined`, () => {
+      strictEqual(nodehunGB.getWordCharacters(), undefined)
     })
   })
 
-  describe('#getWordCharactersUTF16()', () => {
-    it('should return the defined word-characters for US dictionary', () => {
-      const result = nodehun.getWordCharactersUTF16()
-      if (result !== undefined) {
-        strictEqual(typeof result, 'string')
-      }
+  describe('Nodehun#getWordCharactersUTF16()', () => {
+    let nodehun: any
+    let nodehunGB: any
+
+    beforeEach(() => {
+      nodehun = context.factory.create('enUS')
+      nodehunGB = context.factory.create('enGB')
     })
 
-    it('should return the defined word-characters for GB dictionary', () => {
-      const result = nodehunGB.getWordCharactersUTF16()
-      if (result !== undefined) {
-        strictEqual(typeof result, 'string')
-      }
+    it(`should return the defined word-characters`, () => {
+      strictEqual(nodehun.getWordCharactersUTF16(), `'-.0123456789'`)
     })
-  })
 
-  describe('#getDictionaryEncoding()', () => {
-    it('should return encoding as a string when known', () => {
-      const result = nodehun.getDictionaryEncoding()
-      strictEqual(typeof result, 'string')
+    it(`should return 'undefined' when not defined`, () => {
+      strictEqual(nodehunGB.getWordCharactersUTF16(), undefined)
     })
   })
 
-  describe('#getVersion()', () => {
-    it('should return "undefined" when not defined', () => {
-      const result = nodehun.getVersion()
-      strictEqual(result, undefined)
+  describe('Nodehun#getDictionaryEncoding()', () => {
+    let nodehun: any
+
+    beforeEach(() => {
+      nodehun = context.factory.create('enUS')
+    })
+
+    it(`should return encoding as a string when known`, () => {
+      strictEqual(nodehun.getDictionaryEncoding(), 'UTF-8')
+    })
+  })
+
+  describe('Nodehun#getVersion()', () => {
+    let nodehun: any
+
+    beforeEach(() => {
+      nodehun = context.factory.create('enUS')
+    })
+
+    it(`should return 'undefined' when not defined`, () => {
+      strictEqual(nodehun.getVersion(), undefined)
     })
   })
 })

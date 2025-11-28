@@ -1,24 +1,30 @@
-import { strictEqual, fail } from 'assert'
+import { fail, strictEqual } from 'assert'
 import { TestContext, runWithAllConstructors } from '../utils/test-factory'
 
 runWithAllConstructors('Spell Tests', (context: TestContext) => {
-  let nodehun: any
-
-  beforeEach(() => {
-    nodehun = context.factory.create('enUS')
-  })
-
   describe('#spell(word)', () => {
-    it('should be a function', () => {
+    let nodehun: any
+
+    beforeEach(() => {
+      nodehun = context.factory.create('enUS')
+    })
+
+    it(`should be a function`, async () => {
       strictEqual(typeof nodehun.spell, 'function')
     })
 
-    it('should return a promise', () => {
-      const result = nodehun.spell('hello')
-      strictEqual(typeof result.then, 'function')
+    it(`should return a promise`, async () => {
+      let success = false
+
+      await nodehun.spell()
+        .then(() => { })
+        .catch(() => { })
+        .finally(() => { success = true })
+
+      strictEqual(success, true)
     })
 
-    it('should throw when 0 arguments are given', async () => {
+    it(`should throw when 0 arguments are given`, async () => {
       try {
         await nodehun.spell()
         fail()
@@ -27,45 +33,56 @@ runWithAllConstructors('Spell Tests', (context: TestContext) => {
       }
     })
 
-    it('should throw when 2 arguments are given', async () => {
+    it(`should throw when 2 arguments are given`, async () => {
       try {
-        await nodehun.spell('hello', 'world')
+        await nodehun.spell(1, 2)
         fail()
       } catch {
         // success
       }
     })
 
-    it('should throw when the first argument isn\'t a string', async () => {
+    it(`should throw when the first argument isn't a string`, async () => {
       try {
-        await nodehun.spell(1)
+        await nodehun.spell(123456)
         fail()
       } catch {
         // success
       }
     })
 
-    it('should return true when the word is spelled correctly', async () => {
-      const result = await nodehun.spell('hello')
-      strictEqual(result, true)
+    it(`should return true when the word is spelled correctly`, async () => {
+      strictEqual(await nodehun.spell('color'), true)
     })
 
-    it('should return false when the word is not spelled correctly', async () => {
-      const result = await nodehun.spell('wrng')
-      strictEqual(result, false)
+    it(`should return false when the word is not spelled correctly`, async () => {
+      strictEqual(await nodehun.spell('colour'), false)
     })
 
-    it('should not throw when spellchecking emojis ☀', async () => {
+    it(`should not throw when spellchecking emojis ☀`, async () => {
+      await nodehun.spell('😀')
       await nodehun.spell('☀')
     })
   })
 
   describe('#spellSync(word)', () => {
-    it('should be a function', () => {
+    let nodehun: any
+    let nodehunNL: any
+
+    beforeEach(() => {
+      nodehun = context.factory.create('enUS')
+      try {
+        nodehunNL = context.factory.create('nl')
+      } catch {
+        // Dutch dictionary may not be available
+      }
+    })
+
+    it(`should be a function`, async () => {
       strictEqual(typeof nodehun.spellSync, 'function')
     })
 
-    it('should throw when 0 arguments are given', () => {
+    it(`should throw when 0 arguments are given`, () => {
       try {
         nodehun.spellSync()
         fail()
@@ -74,187 +91,122 @@ runWithAllConstructors('Spell Tests', (context: TestContext) => {
       }
     })
 
-    it('should throw when 2 arguments are given', () => {
+    it(`should throw when 2 arguments are given`, () => {
       try {
-        nodehun.spellSync('hello', 'world')
+        nodehun.spellSync(1, 2)
         fail()
       } catch {
         // success
       }
     })
 
-    it('should throw when the first argument isn\'t a string', () => {
+    it(`should throw when the first argument isn't a string`, () => {
       try {
-        nodehun.spellSync(1)
+        nodehun.spellSync(123456)
         fail()
       } catch {
         // success
       }
     })
 
-    it('should return false when a word is not correctly spelled', () => {
-      const result = nodehun.spellSync('wrng')
-      strictEqual(result, false)
+    it(`should return 'false' when a word is not correctly spelled`, () => {
+      strictEqual(nodehun.spellSync('colour'), false)
     })
 
-    it('should return true when a word is correctly spelled (1)', () => {
-      const result = nodehun.spellSync('hello')
-      strictEqual(result, true)
+    it(`should return 'true' when a word is correctly spelled (1)`, () => {
+      strictEqual(nodehun.spellSync('color'), true)
     })
 
-    it('should return true when a word is correctly spelled (2)', () => {
-      const result = nodehun.spellSync('world')
-      strictEqual(result, true)
+    it(`should return 'true' when a word is correctly spelled (2)`, () => {
+      strictEqual(nodehun.spellSync('c'), true)
     })
 
-    it('should return true without word', () => {
-      const result = nodehun.spellSync('')
-      strictEqual(result, true)
+    it(`should return 'true' without word`, () => {
+      strictEqual(nodehun.spellSync(' '), true)
     })
 
-    it('should return true for non-words', () => {
-      const result = nodehun.spellSync('123')
-      strictEqual(result, true)
+    it(`should return 'true' for non-words`, () => {
+      strictEqual(nodehun.spellSync('.'), true)
     })
 
-    it('should check for sentence-case when upper-case (ok)', () => {
-      const result = nodehun.spellSync('HELLO')
-      strictEqual(result, true)
+    it(`should check for sentence-case when upper-case (ok)`, () => {
+      strictEqual(nodehun.spellSync('ABDUL'), true)
     })
 
-    it('should check for sentence-case when upper-case (not ok)', () => {
-      const result = nodehun.spellSync('WRNG')
-      strictEqual(result, false)
+    it(`should check for sentence-case when upper-case (not ok)`, () => {
+      strictEqual(nodehun.spellSync('COLOUR'), false)
     })
 
-    it('should check for lower-case (ok)', () => {
-      const result = nodehun.spellSync('hello')
-      strictEqual(result, true)
+    it(`should check for lower-case (ok)`, () => {
+      strictEqual(nodehun.spellSync('Color'), true)
     })
 
-    it('should check for lower-case (not ok)', () => {
-      const result = nodehun.spellSync('wrng')
-      strictEqual(result, false)
+    it(`should check for lower-case (not ok)`, () => {
+      strictEqual(nodehun.spellSync('Colour'), false)
     })
 
-    it('should check for lower-case (not ok)', () => {
-      const result = nodehun.spellSync('helllo')
-      strictEqual(result, false)
+    it(`should check for lower-case (not ok)`, () => {
+      strictEqual(nodehun.spellSync('Colour'), false)
     })
 
-    it('should support Dutch DVD word when available', () => {
-      try {
-        const nodehunNL = context.factory.create('nl')
-        const result = nodehunNL.spellSync('DVD')
-        // Test passes regardless of result - dictionary may vary
-      } catch (error) {
-        // Skip if Dutch dictionary not available
+    it(`should not check upper-case for sentence-case when KEEPCASE`, () => {
+      if (nodehunNL) {
+        strictEqual(nodehunNL.spellSync('DVD'), false)
       }
     })
 
-    it('should handle Dutch casing when available', () => {
-      try {
-        const nodehunNL = context.factory.create('nl')
-        const result = nodehunNL.spellSync('dvd')
-        // Test passes regardless of result - dictionary may vary
-      } catch (error) {
-        // Skip if Dutch dictionary not available
+    it(`should not check other casing for lower-case when KEEPCASE`, () => {
+      if (nodehunNL) {
+        strictEqual(nodehunNL.spellSync('dVd'), false)
       }
     })
 
-    it('should handle Dutch compounds when available', () => {
-      try {
-        const nodehunNL = context.factory.create('nl')
-        const result = nodehunNL.spellSync('voorstel')
-        // Test passes regardless of result - dictionary may vary
-      } catch (error) {
-        // Skip if Dutch dictionary not available
+    it(`should support ONLYINCOMPOUND (ok)`, () => {
+      if (nodehunNL) {
+        strictEqual(nodehunNL.spellSync('eierlevendbarend'), true)
       }
     })
 
-    it('should handle Dutch compound restrictions when available', () => {
-      try {
-        const nodehunNL = context.factory.create('nl')
-        const result = nodehunNL.spellSync('stel')
-        // Test passes regardless of result - dictionary may vary
-      } catch (error) {
-        // Skip if Dutch dictionary not available
+    it(`should support ONLYINCOMPOUND (not ok)`, () => {
+      if (nodehunNL) {
+        strictEqual(nodehunNL.spellSync('eier'), false)
       }
     })
 
-    it('should support compounds (1)', () => {
-      try {
-        const nodehunNL = context.factory.create('nl')
-        const result = nodehunNL.spellSync('menuonderdeel')
-        strictEqual(result, true)
-      } catch (error) {
-        // Skip if test doesn't pass with current dictionary
-      }
+    it(`should support compounds (1)`, () => {
+      strictEqual(nodehun.spellSync('21st'), true)
     })
 
-    it('should support compounds (2)', () => {
-      try {
-        const nodehunNL = context.factory.create('nl')
-        const result = nodehunNL.spellSync('voorstelonderdeel')
-        strictEqual(result, true)
-      } catch (error) {
-        // Skip if test doesn't pass with current dictionary
-      }
+    it(`should support compounds (2)`, () => {
+      strictEqual(nodehun.spellSync('20st'), false)
     })
 
-    it('should support compounds (3)', () => {
-      try {
-        const nodehunNL = context.factory.create('nl')
-        const result = nodehunNL.spellSync('DVD-voorstel')
-        strictEqual(result, true)
-      } catch (error) {
-        // Skip if test doesn't pass with current dictionary
-      }
+    it(`should support compounds (3)`, () => {
+      strictEqual(nodehun.spellSync('20th'), true)
     })
 
-    it('should support compounds (4)', () => {
-      try {
-        const nodehunNL = context.factory.create('nl')
-        const result = nodehunNL.spellSync('DVD-speler')
-        strictEqual(result, true)
-      } catch (error) {
-        // Skip if test doesn't pass with current dictionary
-      }
+    it(`should support compounds (4)`, () => {
+      strictEqual(nodehun.spellSync('23st'), false)
     })
 
-    it('should support compounds (5)', () => {
-      try {
-        const nodehunNL = context.factory.create('nl')
-        const result = nodehunNL.spellSync('DVD-speleronderdeel')
-        strictEqual(result, true)
-      } catch (error) {
-        // Skip if test doesn't pass with current dictionary
-      }
+    it(`should support compounds (5)`, () => {
+      strictEqual(nodehun.spellSync('23th'), false)
     })
 
-    it('should support compounds (6)', () => {
-      const nodehunNL = context.factory.create('nl')
-      const result = nodehunNL.spellSync('voorstelmateriaal')
-      strictEqual(result, true)
+    it(`should support compounds (6)`, () => {
+      strictEqual(nodehun.spellSync('23rd'), true)
     })
 
-    it('should support compounds (7)', () => {
-      const nodehunNL = context.factory.create('nl')
-      const result = nodehunNL.spellSync('voorstellettertype')
-      strictEqual(result, true)
+    it(`should support compounds (7)`, () => {
+      strictEqual(nodehun.spellSync('12th'), true)
     })
 
-    it('should support compounds (8)', () => {
-      try {
-        const nodehunNL = context.factory.create('nl')
-        const result = nodehunNL.spellSync('beeldschermvoorstelmateriaal')
-        strictEqual(result, true)
-      } catch (error) {
-        // Skip if test doesn't pass with current dictionary
-      }
+    it(`should support compounds (8)`, () => {
+      strictEqual(nodehun.spellSync('22nd'), true)
     })
 
-    it('should not throw when spellchecking emojis ☀', () => {
+    it(`should not throw when spellchecking emojis ☀`, () => {
+      nodehun.spellSync('😀')
       nodehun.spellSync('☀')
     })
   })

@@ -1,24 +1,29 @@
-import { strictEqual, fail, deepEqual } from 'assert'
+import { fail, strictEqual, deepEqual } from 'assert'
 import { TestContext, runWithAllConstructors } from '../utils/test-factory'
 
 runWithAllConstructors('Morphology Tests', (context: TestContext) => {
-  let nodehun: any
+  describe('Nodehun#analyze(word: string): Promise<string[]>;', () => {
+    let nodehun: any
 
-  beforeEach(() => {
-    nodehun = context.factory.create('enUS')
-  })
+    beforeEach(() => {
+      nodehun = context.factory.create('enUS')
+    })
 
-  describe('#analyze(word)', () => {
-    it('should be a function', () => {
+    it(`should be a function`, () => {
       strictEqual(typeof nodehun.analyze, 'function')
     })
 
-    it('should return a promise', () => {
-      const result = nodehun.analyze('hello')
-      strictEqual(typeof result.then, 'function')
+    it(`should return a promise`, async () => {
+      let success = false
+      await nodehun.analyze()
+        .then(() => { })
+        .catch(() => { })
+        .finally(() => { success = true })
+
+      strictEqual(success, true)
     })
 
-    it('should throw when no arguments are given', async () => {
+    it(`should throw when no arguments are given`, async () => {
       try {
         await nodehun.analyze()
         fail()
@@ -27,16 +32,16 @@ runWithAllConstructors('Morphology Tests', (context: TestContext) => {
       }
     })
 
-    it('should throw when 2 arguments are given', async () => {
+    it(`should throw when 2 arguments are given`, async () => {
       try {
-        await nodehun.analyze('hello', 'world')
+        await nodehun.analyze(1, 2)
         fail()
       } catch {
         // success
       }
     })
 
-    it('should throw when the first argument isn\'t a string', async () => {
+    it(`should throw when the first argument isn't a string`, async () => {
       try {
         await nodehun.analyze(1)
         fail()
@@ -45,24 +50,34 @@ runWithAllConstructors('Morphology Tests', (context: TestContext) => {
       }
     })
 
-    it('should return morphological analysis', async () => {
-      const result = await nodehun.analyze('cars')
-      strictEqual(Array.isArray(result), true)
+    it(`should return morphological analysis`, async () => {
+      const morphologicalAnalysis = await nodehun.analyze('telling')
+      deepEqual(
+        morphologicalAnalysis,
+        [' st:telling ts:0', ' st:tell ts:0 al:told is:Vg']
+      )
     })
 
-    it('should return an empty array when it isn\'t available', async () => {
-      const result = await nodehun.analyze('aaaa')
-      strictEqual(Array.isArray(result), true)
-      strictEqual(result.length, 0)
+    it(`should return an empty array when it isn't available`, async () => {
+      deepEqual(
+        await nodehun.analyze('npmnpmnpmnpmnpmnpmnpmnpm'),
+        []
+      )
     })
   })
 
-  describe('#analyzeSync(word)', () => {
-    it('should be a function', () => {
+  describe('Nodehun#analyzeSync(word: string): string[];', () => {
+    let nodehun: any
+
+    beforeEach(() => {
+      nodehun = context.factory.create('enUS')
+    })
+
+    it(`should be a function`, () => {
       strictEqual(typeof nodehun.analyzeSync, 'function')
     })
 
-    it('should throw when no arguments are given', () => {
+    it(`should throw when no arguments are given`, () => {
       try {
         nodehun.analyzeSync()
         fail()
@@ -71,16 +86,16 @@ runWithAllConstructors('Morphology Tests', (context: TestContext) => {
       }
     })
 
-    it('should throw when 2 arguments are given', () => {
+    it(`should throw when 2 arguments are given`, () => {
       try {
-        nodehun.analyzeSync('hello', 'world')
+        nodehun.analyzeSync(1, 2)
         fail()
       } catch {
         // success
       }
     })
 
-    it('should throw when the first argument isn\'t a string', () => {
+    it(`should throw when the first argument isn't a string`, () => {
       try {
         nodehun.analyzeSync(1)
         fail()
@@ -89,29 +104,44 @@ runWithAllConstructors('Morphology Tests', (context: TestContext) => {
       }
     })
 
-    it('should return morphological analysis', () => {
-      const result = nodehun.analyzeSync('cars')
-      strictEqual(Array.isArray(result), true)
+    it(`should return morphological analysis`, async () => {
+      const morphologicalAnalysis = nodehun.analyzeSync('telling')
+      deepEqual(
+        morphologicalAnalysis,
+        [' st:telling ts:0', ' st:tell ts:0 al:told is:Vg']
+      )
     })
 
-    it('should return an empty array when it isn\'t available', () => {
-      const result = nodehun.analyzeSync('aaaa')
-      strictEqual(Array.isArray(result), true)
-      strictEqual(result.length, 0)
+    it(`should return an empty array when it isn't available`, async () => {
+      deepEqual(
+        nodehun.analyzeSync('npmnpmnpmnpmnpmnpmnpmnpm'),
+        []
+      )
     })
   })
 
-  describe('#stem(word)', () => {
-    it('should be a function', () => {
+  describe('Nodehun#stem(word: string): Promise<string[]>;', () => {
+    let nodehun: any
+
+    beforeEach(() => {
+      nodehun = context.factory.create('enUS')
+    })
+
+    it(`should be a function`, () => {
       strictEqual(typeof nodehun.stem, 'function')
     })
 
-    it('should return a promise', () => {
-      const result = nodehun.stem('hello')
-      strictEqual(typeof result.then, 'function')
+    it(`should return a promise`, async () => {
+      let success = false
+      await nodehun.stem()
+        .then(() => { })
+        .catch(() => { })
+        .finally(() => { success = true })
+
+      strictEqual(success, true)
     })
 
-    it('should throw when no arguments are given', async () => {
+    it(`should throw when no arguments are given`, async () => {
       try {
         await nodehun.stem()
         fail()
@@ -120,16 +150,16 @@ runWithAllConstructors('Morphology Tests', (context: TestContext) => {
       }
     })
 
-    it('should throw when 2 arguments are given', async () => {
+    it(`should throw when 2 arguments are given`, async () => {
       try {
-        await nodehun.stem('hello', 'world')
+        await nodehun.stem(1, 2)
         fail()
       } catch {
         // success
       }
     })
 
-    it('should throw when the first argument isn\'t a string', async () => {
+    it(`should throw when the first argument isn't a string`, async () => {
       try {
         await nodehun.stem(1)
         fail()
@@ -138,25 +168,34 @@ runWithAllConstructors('Morphology Tests', (context: TestContext) => {
       }
     })
 
-    it('should return roots', async () => {
-      const result = await nodehun.stem('cars')
-      strictEqual(Array.isArray(result), true)
-      strictEqual(result.includes('car'), true)
+    it(`should return roots`, async () => {
+      const roots = await nodehun.stem('telling')
+      deepEqual(
+        roots,
+        ['telling', 'tell']
+      )
     })
 
-    it('should return an empty array when not available', async () => {
-      const result = await nodehun.stem('aaaa')
-      strictEqual(Array.isArray(result), true)
-      strictEqual(result.length, 0)
+    it(`should return an empty array when not available`, async () => {
+      deepEqual(
+        await nodehun.stem('npmnpmnpmnpmnpmnpmnpmnpm'),
+        []
+      )
     })
   })
 
-  describe('#stemSync(word)', () => {
-    it('should be a function', () => {
+  describe('Nodehun#stemSync(word: string): string[];', () => {
+    let nodehun: any
+
+    beforeEach(() => {
+      nodehun = context.factory.create('enUS')
+    })
+
+    it(`should be a function`, () => {
       strictEqual(typeof nodehun.stemSync, 'function')
     })
 
-    it('should throw when no arguments are given', () => {
+    it(`should throw when no arguments are given`, () => {
       try {
         nodehun.stemSync()
         fail()
@@ -165,16 +204,16 @@ runWithAllConstructors('Morphology Tests', (context: TestContext) => {
       }
     })
 
-    it('should throw when 2 arguments are given', () => {
+    it(`should throw when 2 arguments are given`, () => {
       try {
-        nodehun.stemSync('hello', 'world')
+        nodehun.stemSync(1, 2)
         fail()
       } catch {
         // success
       }
     })
 
-    it('should throw when the first argument isn\'t a string', () => {
+    it(`should throw when the first argument isn't a string`, () => {
       try {
         nodehun.stemSync(1)
         fail()
@@ -183,30 +222,44 @@ runWithAllConstructors('Morphology Tests', (context: TestContext) => {
       }
     })
 
-    it('should return roots', () => {
-      const result = nodehun.stemSync('cars')
-      strictEqual(Array.isArray(result), true)
-      strictEqual(result.includes('car'), true)
+    it(`should return roots`, async () => {
+      const roots = nodehun.stemSync('telling')
+      deepEqual(
+        roots,
+        ['telling', 'tell']
+      )
     })
 
-    it('should return an empty array when not available', () => {
-      const result = nodehun.stemSync('aaaa')
-      strictEqual(Array.isArray(result), true)
-      strictEqual(result.length, 0)
+    it(`should return an empty array when not available`, async () => {
+      deepEqual(
+        nodehun.stemSync('npmnpmnpmnpmnpmnpmnpmnpm'),
+        []
+      )
     })
   })
 
-  describe('#generate(word, example)', () => {
-    it('should be a function', () => {
+  describe('Nodehun#generate(word: string, example: string): Promise<string[]>;', () => {
+    let nodehun: any
+
+    beforeEach(() => {
+      nodehun = context.factory.create('enUS')
+    })
+
+    it(`should be a function`, () => {
       strictEqual(typeof nodehun.generate, 'function')
     })
 
-    it('should return a promise', () => {
-      const result = nodehun.generate('hello', 'world')
-      strictEqual(typeof result.then, 'function')
+    it(`should return a promise`, async () => {
+      let success = false
+      await nodehun.generate()
+        .then(() => { })
+        .catch(() => { })
+        .finally(() => { success = true })
+
+      strictEqual(success, true)
     })
 
-    it('should throw when no arguments are given', async () => {
+    it(`should throw when no arguments are given`, async () => {
       try {
         await nodehun.generate()
         fail()
@@ -215,68 +268,81 @@ runWithAllConstructors('Morphology Tests', (context: TestContext) => {
       }
     })
 
-    it('should throw when 3 arguments are given', async () => {
+    it(`should throw when 3 arguments are given`, async () => {
       try {
-        await nodehun.generate('hello', 'world', 'test')
+        await nodehun.generate(1, 2, 3)
         fail()
       } catch {
         // success
       }
     })
 
-    it('should throw when the first argument isn\'t a string', async () => {
+    it(`should throw when the first argument isn't a string`, async () => {
       try {
-        await nodehun.generate(1, 'world')
+        await nodehun.generate(1)
         fail()
       } catch {
         // success
       }
     })
 
-    it('should throw when the second argument isn\'t a string', async () => {
+    it(`should throw when the second argument isn't a string`, async () => {
       try {
-        await nodehun.generate('hello', 2)
+        await nodehun.generate('abc', 1)
         fail()
       } catch {
         // success
       }
     })
 
-    it('should return variations based on example', async () => {
-      const result = await nodehun.generate('drink', 'drinks')
-      strictEqual(Array.isArray(result), true)
+    it(`should return variations based on example`, async () => {
+      deepEqual(
+        await nodehun.generate('telling', 'ran'),
+        ['told']
+      )
     })
 
-    it('should return variations based on example (2)', async () => {
-      const result = await nodehun.generate('cat', 'cats')
-      strictEqual(Array.isArray(result), true)
+    it(`should return variations based on example (2)`, async () => {
+      deepEqual(
+        await nodehun.generate('told', 'run'),
+        ['tell']
+      )
     })
 
-    it('should return an empty array when not computable', async () => {
-      const result = await nodehun.generate('aaaa', 'bbbb')
-      strictEqual(Array.isArray(result), true)
-      strictEqual(result.length, 0)
+    it(`should return an empty array when not computable`, async () => {
+      deepEqual(
+        await nodehun.generate('told', 'npmnpmnpmnpm'),
+        []
+      )
     })
 
-    it('should return an empty array when not computable (2)', async () => {
-      const result = await nodehun.generate('hello', 'bbbb')
-      strictEqual(Array.isArray(result), true)
-      strictEqual(result.length, 0)
+    it(`should return an empty array when not computable (2)`, async () => {
+      deepEqual(
+        await nodehun.generate('npmnpmnpmnpm', 'npmnpmnpmnpm'),
+        []
+      )
     })
 
-    it('should return an empty array when not computable (3)', async () => {
-      const result = await nodehun.generate('aaaa', 'world')
-      strictEqual(Array.isArray(result), true)
-      strictEqual(result.length, 0)
+    it(`should return an empty array when not computable (3)`, async () => {
+      deepEqual(
+        await nodehun.generate('npmnpmnpmnpm', 'run'),
+        []
+      )
     })
   })
 
-  describe('#generateSync(word, example)', () => {
-    it('should be a function', () => {
+  describe('Nodehun#generateSync(word: string): string[];', () => {
+    let nodehun: any
+
+    beforeEach(() => {
+      nodehun = context.factory.create('enUS')
+    })
+
+    it(`should be a function`, () => {
       strictEqual(typeof nodehun.generateSync, 'function')
     })
 
-    it('should throw when no arguments are given', () => {
+    it(`should throw when no arguments are given`, () => {
       try {
         nodehun.generateSync()
         fail()
@@ -285,59 +351,66 @@ runWithAllConstructors('Morphology Tests', (context: TestContext) => {
       }
     })
 
-    it('should throw when 3 arguments are given', () => {
+    it(`should throw when 3 arguments are given`, async () => {
       try {
-        nodehun.generateSync('hello', 'world', 'test')
+        nodehun.generateSync(1, 2, 3)
         fail()
       } catch {
         // success
       }
     })
 
-    it('should throw when the first argument isn\'t a string', () => {
+    it(`should throw when the first argument isn't a string`, async () => {
       try {
-        nodehun.generateSync(1, 'world')
+        nodehun.generateSync(1)
         fail()
       } catch {
         // success
       }
     })
 
-    it('should throw when the second argument isn\'t a string', () => {
+    it(`should throw when the second argument isn't a string`, async () => {
       try {
-        nodehun.generateSync('hello', 2)
+        nodehun.generateSync('abc', 1)
         fail()
       } catch {
         // success
       }
     })
 
-    it('should return variations based on example', () => {
-      const result = nodehun.generateSync('drink', 'drinks')
-      strictEqual(Array.isArray(result), true)
+    it(`should return variations based on example`, async () => {
+      deepEqual(
+        nodehun.generateSync('telling', 'ran'),
+        ['told']
+      )
     })
 
-    it('should return variations based on example (2)', () => {
-      const result = nodehun.generateSync('cat', 'cats')
-      strictEqual(Array.isArray(result), true)
+    it(`should return variations based on example (2)`, async () => {
+      deepEqual(
+        nodehun.generateSync('told', 'run'),
+        ['tell']
+      )
     })
 
-    it('should return an empty array when not computable', () => {
-      const result = nodehun.generateSync('aaaa', 'bbbb')
-      strictEqual(Array.isArray(result), true)
-      strictEqual(result.length, 0)
+    it(`should return an empty array when not computable`, async () => {
+      deepEqual(
+        nodehun.generateSync('told', 'npmnpmnpmnpm'),
+        []
+      )
     })
 
-    it('should return an empty array when not computable (2)', () => {
-      const result = nodehun.generateSync('hello', 'bbbb')
-      strictEqual(Array.isArray(result), true)
-      strictEqual(result.length, 0)
+    it(`should return an empty array when not computable (2)`, async () => {
+      deepEqual(
+        nodehun.generateSync('npmnpmnpmnpm', 'npmnpmnpmnpm'),
+        []
+      )
     })
 
-    it('should return an empty array when not computable (3)', () => {
-      const result = nodehun.generateSync('aaaa', 'world')
-      strictEqual(Array.isArray(result), true)
-      strictEqual(result.length, 0)
+    it(`should return an empty array when not computable (3)`, async () => {
+      deepEqual(
+        nodehun.generateSync('npmnpmnpmnpm', 'run'),
+        []
+      )
     })
   })
 })

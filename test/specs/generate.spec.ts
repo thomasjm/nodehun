@@ -2,7 +2,7 @@ import { fail, strictEqual, deepEqual } from 'assert'
 import { TestContext, runWithAllConstructors } from '../utils/test-factory'
 
 runWithAllConstructors('Generate Tests', (context: TestContext) => {
-  describe('Nodehun#generate(word: string, example: string): Promise<string[]>;', () => {
+  describe('Nodehun#generate(word: string, example: string)', () => {
     let nodehun: any
 
     beforeEach(() => {

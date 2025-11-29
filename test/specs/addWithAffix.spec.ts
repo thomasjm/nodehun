@@ -2,7 +2,7 @@ import { fail, strictEqual } from 'assert'
 import { TestContext, runWithAllConstructors } from '../utils/test-factory'
 
 runWithAllConstructors('AddWithAffix Tests', (context: TestContext) => {
-  describe('Nodehun#addWithAffix(word: string, example: string): Promise<void>;', () => {
+  describe('Nodehun#addWithAffix(word: string, example: string)', () => {
     let nodehun: any
 
     beforeEach(() => {

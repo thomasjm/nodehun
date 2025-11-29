@@ -2,7 +2,7 @@ import { fail, strictEqual, notEqual } from 'assert'
 import { TestContext, runWithAllConstructors } from '../utils/test-factory'
 
 runWithAllConstructors('addDictionaryPath Tests', (context: TestContext) => {
-  describe('Nodehun#addDictionaryPath(dictionaryPath: string): Promise<void>;', () => {
+  describe('Nodehun#addDictionaryPath(dictionaryPath: string)', () => {
     let nodehun: any
 
     beforeEach(() => {

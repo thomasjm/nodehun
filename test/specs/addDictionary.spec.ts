@@ -1,8 +1,8 @@
-import { fail, strictEqual, notEqual } from 'assert'
+import { fail, strictEqual } from 'assert'
 import { TestContext, runWithAllConstructors } from '../utils/test-factory'
 
 runWithAllConstructors('addDictionary Tests', (context: TestContext) => {
-  describe('Nodehun#addDictionary(dictionary: Buffer): Promise<void>;', () => {
+  describe('Nodehun#addDictionary(dictionary: Buffer)', () => {
     let nodehun: any
 
     beforeEach(() => {

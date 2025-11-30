@@ -1,8 +1,8 @@
 import { fail, strictEqual } from 'assert'
 import { TestContext, runWithAllConstructors } from '../utils/test-factory'
 
-runWithAllConstructors('addDictionarySync Tests', (context: TestContext) => {
-  describe('Nodehun#addDictionarySync(dictionary: Buffer): void;', () => {
+runWithAllConstructors('addDictionaryPathSync Tests', (context: TestContext) => {
+  describe('Nodehun#addDictionaryPathSync(dictionaryPath: string): void;', () => {
     let nodehun: any
 
     beforeEach(() => {
@@ -10,12 +10,12 @@ runWithAllConstructors('addDictionarySync Tests', (context: TestContext) => {
     })
 
     it(`should be a function`, () => {
-      strictEqual(typeof nodehun.addDictionarySync, 'function')
+      strictEqual(typeof nodehun.addDictionaryPathSync, 'function')
     })
 
     it(`should throw when no arguments are given`, () => {
       try {
-        nodehun.addDictionarySync()
+        nodehun.addDictionaryPathSync()
         fail()
       } catch {
         // success
@@ -24,7 +24,7 @@ runWithAllConstructors('addDictionarySync Tests', (context: TestContext) => {
 
     it(`should throw when 2 arguments are given`, () => {
       try {
-        nodehun.addDictionarySync(1, 2)
+        nodehun.addDictionaryPathSync(1, 2)
         fail()
       } catch {
         // success
@@ -33,7 +33,7 @@ runWithAllConstructors('addDictionarySync Tests', (context: TestContext) => {
 
     it(`should throw when the first argument isn't a string`, () => {
       try {
-        nodehun.addDictionarySync(1)
+        nodehun.addDictionaryPathSync(1)
         fail()
       } catch {
         // success
@@ -41,7 +41,7 @@ runWithAllConstructors('addDictionarySync Tests', (context: TestContext) => {
     })
 
     it(`should mark correct after dictionary is added`, async () => {
-      nodehun.addDictionarySync(context.dictionaries.fr.dictionaryBuffer)
+      nodehun.addDictionaryPathSync(context.dictionaries.fr.dictionaryPath)
       strictEqual(nodehun.spellSync('bonjour'), true)
     })
   })

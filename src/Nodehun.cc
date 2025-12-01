@@ -62,10 +62,23 @@ Nodehun::Nodehun(const Napi::CallbackInfo& info) : Napi::ObjectWrap<Nodehun>(inf
   Napi::Env env = info.Env();
   Napi::HandleScope scope(env);
 
-  Napi::Buffer<char> affixBuffer = info[0].As<Napi::Buffer<char>>();
-  Napi::Buffer<char> dictionaryBuffer = info[1].As<Napi::Buffer<char>>();
+  if (info[0].IsString() && info[1].IsString()) {
+    // Path-based constructor: pass file paths directly to Hunspell (notpath=false)
+    std::string affixPath = info[0].As<Napi::String>().Utf8Value();
+    std::string dictPath = info[1].As<Napi::String>().Utf8Value();
 
-  context = new HunspellContext(new Hunspell(affixBuffer.Data(), dictionaryBuffer.Data(), NULL, true));
+    context = new HunspellContext(new Hunspell(affixPath.c_str(), dictPath.c_str(), NULL, false));
+  } else {
+    // Buffer-based constructor: pass file contents (notpath=true)
+    Napi::Buffer<char> affixBuffer = info[0].As<Napi::Buffer<char>>();
+    Napi::Buffer<char> dictionaryBuffer = info[1].As<Napi::Buffer<char>>();
+
+    // Ensure null termination for Hunspell string constructor (notpath=true)
+    std::string affixStr(affixBuffer.Data(), affixBuffer.Length());
+    std::string dictionaryStr(dictionaryBuffer.Data(), dictionaryBuffer.Length());
+
+    context = new HunspellContext(new Hunspell(affixStr.c_str(), dictionaryStr.c_str(), NULL, true));
+  }
 };
 
 Nodehun::~Nodehun() {
@@ -81,14 +94,16 @@ Napi::Object Nodehun::NewInstance(const Napi::CallbackInfo& info) {
 
   if (info.Length() != 2) {
     Napi::Error::New(env, INVALID_NUMBER_OF_ARGUMENTS).ThrowAsJavaScriptException();
-  } else if (!info[0].IsBuffer()) {
+  } else if (!(info[0].IsBuffer() || info[0].IsString())) {
     Napi::Error::New(env, INVALID_FIRST_ARGUMENT).ThrowAsJavaScriptException();
-  } else if (!info[1].IsBuffer()) {
+  } else if (!(info[1].IsBuffer() || info[1].IsString())) {
     Napi::Error::New(env, INVALID_SECOND_ARGUMENT).ThrowAsJavaScriptException();
+  } else if ((info[0].IsBuffer() && !info[1].IsBuffer()) || (info[0].IsString() && !info[1].IsString())) {
+    Napi::Error::New(env, "Arguments must be both buffers or both strings").ThrowAsJavaScriptException();
   } else if (!info.IsConstructCall()) {
     Napi::Error::New(env, INVALID_CONSTRUCTOR_CALL).ThrowAsJavaScriptException();
   }
-  
+
   if (env.IsExceptionPending()) {
     return Napi::Object::New(env);
   } else {

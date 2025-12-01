@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "outDir": "test-build",
+    "module": "CommonJS",
+    "types": [
+      "./src/Nodehun",
+      "node",
+      "mocha"
+    ]
+  },
+  "include": [
+    "test/fixtures/dictionaries.ts",
+    "test/utils/test-factory.ts",
+    "test/specs/*.ts"
+  ],
+  "exclude": []
+}

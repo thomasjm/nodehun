@@ -33,14 +33,13 @@
     "@types/node": "^12.12.6",
     "bindings": "~1.2.1",
     "mocha": "^6.2.2",
-    "ts-node": "^8.4.1",
     "typescript": "^3.7.2"
   },
   "scripts": {
-    "start": "npx nodemon -e ts,js,cc,h,gyp -x \"npm run build && npm run test\"",
-    "start-test": "npx nodemon -e ts,js -x \"npm run test\"",
-    "build": "node-gyp rebuild -j 8",
-    "test": "ts-node --transpile-only node_modules/mocha/bin/mocha ./test/*.spec.ts",
-    "performance-test": "echo \"This command only works with node version 11 or lower!\" && npm i chart.js@2.9.2 chartjs-node@1.7.1 nodehun@2.0.12 && ts-node test/performance/performance.ts"
+    "build": "node -e \"require('fs').rmSync('build', {recursive: true, force: true})\" && node-gyp rebuild -j 8",
+    "test-build": "node -e \"require('fs').rmSync('test-build', {recursive: true, force: true})\" && tsc -p tsconfig.test.json",
+    "test-run": "mocha \"test-build/specs/**/*.js\"",
+    "test": "npm run test-build && npm run test-run",
+    "performance-test": "echo \"This command only works with node version 11 or lower!\" && npm i chart.js@2.9.2 chartjs-node@1.7.1 nodehun@3.0.2 && node test/performance/performance.ts"
   }
 }

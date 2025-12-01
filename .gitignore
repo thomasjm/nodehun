@@ -1,6 +1,8 @@
 node_modules
 build
+test-build
 .idea
 log.txt
 .vscode
 .direnv
+test/**/*.js

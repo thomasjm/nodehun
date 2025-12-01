@@ -1,4 +1,4 @@
-import { fail, strictEqual, notEqual } from 'assert'
+import { fail, strictEqual } from 'assert'
 import { TestContext, runWithAllConstructors } from '../utils/test-factory'
 
 runWithAllConstructors('addDictionaryPath Tests', (context: TestContext) => {
@@ -45,16 +45,9 @@ runWithAllConstructors('addDictionaryPath Tests', (context: TestContext) => {
       }
     })
 
-    if (context.factory.description.includes('Path')) {
-      it(`should mark correct after dictionary is added`, async () => {
-        await nodehun.addDictionaryPath(context.dictionaries.fr.dictionaryPath)
-        strictEqual(await nodehun.spell('bonjour'), true)
-      })
-    } else {
-      it(`should not affect spelling when used with buffer constructor`, async () => {
-        await nodehun.addDictionaryPath(context.dictionaries.fr.dictionaryPath)
-        strictEqual(await nodehun.spell('bonjour'), false)
-      })
-    }
+    it(`should mark correct after dictionary is added`, async () => {
+      await nodehun.addDictionaryPath(context.dictionaries.fr.dictionaryPath)
+      strictEqual(await nodehun.spell('bonjour'), true)
+    })
   })
 })

@@ -8,13 +8,14 @@ class AddDictionaryWorker : public Worker {
         AddDictionaryWorker(
             HunspellContext* context,
             Napi::Promise::Deferred d,
-            std::string dictionary)
-        : Worker(context, d), dictionary(std::move(dictionary)) {}
+            std::string dictionary,
+            bool notpath)
+        : Worker(context, d), dictionary(std::move(dictionary)), notpath(notpath) {}
 
     void Execute() {
         // Worker thread; don't use N-API here
         context->lockWrite();
-        context->instance->add_dic(dictionary.c_str());
+        context->instance->add_dic(dictionary.c_str(), NULL, notpath);
         context->unlockWrite();
     }
 
@@ -26,4 +27,5 @@ class AddDictionaryWorker : public Worker {
 
     private:
         std::string dictionary;
+        bool notpath;
 };

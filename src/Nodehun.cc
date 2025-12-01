@@ -129,7 +129,7 @@ Napi::Value Nodehun::addDictionarySync(const Napi::CallbackInfo& info) {
   } else {
     Napi::Buffer<char> dictionaryBuffer = info[0].As<Napi::Buffer<char>>();
     std::string dictionary(dictionaryBuffer.Data(), dictionaryBuffer.Length());
-    context->instance->add_dic(dictionary.c_str());
+    context->instance->add_dic(dictionary.c_str(), NULL, true);
 
     return env.Undefined();
   }
@@ -152,7 +152,8 @@ Napi::Value Nodehun::addDictionary(const Napi::CallbackInfo& info) {
     AddDictionaryWorker* worker = new AddDictionaryWorker(
       context,
       deferred,
-      std::string(dictionaryBuffer.Data(), dictionaryBuffer.Length())
+      std::string(dictionaryBuffer.Data(), dictionaryBuffer.Length()),
+      true
     );
 
     worker->Queue();
@@ -174,7 +175,7 @@ Napi::Value Nodehun::addDictionaryPathSync(const Napi::CallbackInfo& info) {
     return error.Value();
   } else {
     std::string dictionaryPath = info[0].As<Napi::String>().Utf8Value();
-    context->instance->add_dic(dictionaryPath.c_str());
+    context->instance->add_dic(dictionaryPath.c_str(), NULL, false);
 
     return env.Undefined();
   }
@@ -197,7 +198,8 @@ Napi::Value Nodehun::addDictionaryPath(const Napi::CallbackInfo& info) {
     AddDictionaryWorker* worker = new AddDictionaryWorker(
       context,
       deferred,
-      dictionaryPath
+      dictionaryPath,
+      false
     );
 
     worker->Queue();

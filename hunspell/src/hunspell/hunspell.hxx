@@ -43,7 +43,7 @@ public:
   ~Hunspell();
 
   /* load extra dictionaries (only dic files) */
-  int add_dic(const char * dpath, const char * key = NULL);
+  int add_dic(const char * dpath, const char * key = NULL, bool notpath = false);
 
   /* spell(word) - spellcheck word
    * output: 0 = bad word, not 0 = good word

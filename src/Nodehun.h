@@ -14,19 +14,23 @@ class Nodehun : public Napi::ObjectWrap<Nodehun> {
  private:
   static Napi::FunctionReference constructor;
   HunspellContext* context;
-  
+
   // (dictionary: Buffer) => void
   Napi::Value addDictionary(const Napi::CallbackInfo& info);
   Napi::Value addDictionarySync(const Napi::CallbackInfo& info);
 
+  // (path: string) => void
+  Napi::Value addDictionaryPath(const Napi::CallbackInfo& info);
+  Napi::Value addDictionaryPathSync(const Napi::CallbackInfo& info);
+
   // (word: string) => boolean
   Napi::Value spell(const Napi::CallbackInfo& info);
   Napi::Value spellSync(const Napi::CallbackInfo& info);
-  
+
   // (word: string) => string[] | null
   Napi::Value suggest(const Napi::CallbackInfo& info);
   Napi::Value suggestSync(const Napi::CallbackInfo& info);
-  
+
   // (word: string) => string[]
   Napi::Value analyze(const Napi::CallbackInfo& info);
   Napi::Value analyzeSync (const Napi::CallbackInfo& info);
